@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import ForeignKey
-from .user import User
+from ..auth.user import User
 from typing import Optional
 
 

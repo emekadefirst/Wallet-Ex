@@ -2,7 +2,7 @@ from datetime import datetime
 import uuid
 from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import ForeignKey
-from .user import User  
+from ..auth.user import User  
 
 
 def wallet_tag(username):

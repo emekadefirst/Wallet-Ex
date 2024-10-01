@@ -1,8 +1,8 @@
 from datetime import datetime
 from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import ForeignKey
-from .wallet import Wallet
-from .profile import Credentials
+from ..wallet.wallet_model import Wallet
+from ..wallet.profile_model import Credentials
 
 
 class User(SQLModel, table=True):
