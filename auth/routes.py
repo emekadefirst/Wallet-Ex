@@ -1,28 +1,33 @@
 import os
-import jwt
 from dotenv import load_dotenv
-from fastapi import APIRouter
-from datetime import datetime, timedelta, timezone
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jwt.exceptions import InvalidTokenError
-from passlib.context import CryptContext
+from .schemas import User, Login
+from .hash import get_password_hash
+from .session import create_user, user_get_user_by_id, login_user
+from fastapi import APIRouter, status
 
 load_dotenv()
 auth = APIRouter()
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-ALGORITHM = os.environ.get("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 @auth.post("/login")
-def login():
-    pass
+def login(login: Login):
+    user = login_user(email=login.email, password=login.password)
+    if user is not None:
+        return  {"detail": user, "status": status.HTTP_200_OK}
+    return {"detail": user, "status": status.HTTP_401_UNAUTHORIZED}
 
 
 @auth.post("/signup")
-def register():
-    pass
+def register(user: User):
+    if user:
+        user_id = create_user(
+            email=user.email,
+            username=user.username,
+            password=get_password_hash(user.password),
+        )
+        data = user_get_user_by_id(user_id)
+        return {"status": status.HTTP_201_CREATED, "data": data}
+    return status.HTTP_400_BAD_REQUEST
 
 
 @auth.post("/logout")

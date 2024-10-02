@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from typing import Optional
 from auth.routes import auth
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -8,6 +7,7 @@ app = FastAPI(
     description="Well this Project demonstrate the use of Submub API",
     version="0.0.1"
 )
+
 
 app.include_router(auth, prefix="/auth")
 app.add_middleware(
