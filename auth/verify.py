@@ -6,8 +6,8 @@ from sqlmodel import Session
 from datetime import datetime
 from .models import Credentials
 from decorators import verified_user
-from .session import oauth2_scheme, get_current_user
-from services.sumsub import create_applicant, upload_id, sign_request
+from .session import oauth2_scheme, get_current_user, get_user_by_id
+from services.sumsub import create_applicant, upload_id
 from fastapi import Depends, HTTPException, UploadFile, File, status, APIRouter, Form
 
 
@@ -71,8 +71,7 @@ async def verify(
     state: str = Form(...),
     street: str = Form(...),
     country: str = Form(...),
-    phone_number_1: str = Form(...),
-    phone_number_2: str = Form(...),
+    phone_number: str = Form(...),
     id_document: Optional[UploadFile] = File(None),
     profile_image: Optional[UploadFile] = File(None),
     token: str = Depends(oauth2_scheme),
@@ -92,8 +91,6 @@ async def verify(
         id_document_path = (
             await save_file(id_document, ID_DOC_DIRECTORY) if id_document else None
         )
-
-        # Parse date
         try:
             dob_datetime = datetime.strptime(dob, "%Y-%m-%d")
         except ValueError:
@@ -114,11 +111,14 @@ async def verify(
             id_document=id_document_path,
             profile_image=profile_image_path,
             country=country,
-            phone_number_1=phone_number_1,
-            phone_number_2=phone_number_2,
+            phone_number=phone_number,
             user_id=current_user,
         )
-
+        user = get_user_by_id(current_user)
+        email = user.email
+        applicant = create_applicant(current_user, email, phone_number, state)
+        if applicant:
+            upload_id(applicant, os.path.join(ID_DOC_DIRECTORY, id_document_path))
         return {
             "status": status.HTTP_200_OK,
             "message": "Credentials collected successfully",

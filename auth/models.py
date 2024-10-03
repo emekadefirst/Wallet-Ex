@@ -1,12 +1,12 @@
+import uuid
 from datetime import datetime
-from datetime import datetime
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field
 
 
 class User(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     username: str | None = Field(unique=True, max_length=20)
-    email: str | None = Field(unique=True, max_length=55)
+    email: str | None = Field(unique=True, max_length=30)
     password: str
     created_at: datetime = Field(default_factory=datetime.now)
     credential_status: bool | None = Field(default=False)

@@ -37,31 +37,27 @@ def sign_request(request: requests.Request) -> requests.PreparedRequest:
     return prepared_request
 
 
-def create_applicant():
+def create_applicant(user_id, email, phone, state):
     url = f"{SUMSUB_TEST_BASE_URL}/resources/applicants?levelName=basic-kyc-level"
-    headers = {"Content-Type": "application/json"}  # Corrected the header format
+    headers = {"Content-Type": "application/json"} 
     data = {
-        "externalUserId": "anotherUniqueUs",
-        "email": "emekadefirst@gmail.com",
-        "phone": "+2348148374084",
-        "fixedInfo": {"country": "NGA", "placeOfBirth": "Lagos"},
+        "externalUserId": user_id,
+        "email": email,
+        "phone": phone,
+        "fixedInfo": {"country": "NGA", "placeOfBirth": state},
     }
 
-    # Create a request
     request = requests.Request(method="POST", url=url, headers=headers, json=data)
     prepared_request = sign_request(request)
-
-    # Send the request
     with requests.Session() as session:
         response = session.send(prepared_request, timeout=REQUEST_TIMEOUT)
 
     if response.status_code == 201:
-        print("Applicant created successfully.")
-        return response.json().get("id")
-
-    print("Failed to create applicant.")
-    print(response.status_code, response.json())
-    return None
+        return {"response": response.json().get("id"), "message": "Applicant created successfully."}
+    return {
+            "response": response.json().get("id"),
+            "message": "Applicant creation failed.",
+            }
 
 
 def upload_id(applicant_id, file_path):
@@ -99,8 +95,8 @@ def upload_id(applicant_id, file_path):
             }
 
 
-applicant_id = create_applicant()
-if applicant_id:
-    file_path = "adgh .jpg"
-    result = upload_id(applicant_id, file_path)
-    print(result)
+# applicant_id = create_applicant()
+# if applicant_id:
+#     file_path = "adgh .jpg"
+#     result = upload_id(applicant_id, file_path)
+#     print(result)
