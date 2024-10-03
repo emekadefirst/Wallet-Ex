@@ -1,12 +1,8 @@
 import os
 import jwt
-from typing import Annotated
 from dotenv import load_dotenv
-from .schemas import TokenData
 from passlib.context import CryptContext
-from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timedelta, timezone
-from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 load_dotenv()
@@ -31,6 +27,12 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
 
 
 # async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
@@ -59,7 +61,3 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 #     if current_user.disabled:
 #         raise HTTPException(status_code=400, detail="Inactive user")
 #     return current_user
-
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)

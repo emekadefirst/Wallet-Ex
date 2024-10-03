@@ -1,7 +1,37 @@
+import jwt
+from typing import Annotated
+from sqlalchemy.orm import Session
+from jwt.exceptions import InvalidTokenError
+from fastapi import Depends, status, HTTPException
 from database import engine
-from .models import User
-from .config import verify_password, get_password_hash
+from .models import User, Credentials
+from .config import (
+    verify_password,
+    get_password_hash,
+    oauth2_scheme,
+    SECRET_KEY,
+    ALGORITHM,
+)
 from sqlmodel import Session, select
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: int = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except InvalidTokenError:
+        raise credentials_exception
+    user = get_user_by_id(user_id)
+    if user is None:
+        raise credentials_exception
+    return user.id
 
 
 def create_user(email, username, password):
@@ -13,12 +43,11 @@ def create_user(email, username, password):
         return user_id
 
 
-def all_user():
+def all_users():
     with Session(engine) as session:
-        model = select(User)
-        users = session.exec(model)
-        for user in users:
-            print(user)
+        statement = select(User)
+        users = session.exec(statement).all()  
+        return users
 
 
 def get_user_by_id(id):
@@ -72,3 +101,40 @@ def update_user(id, email=None, username=None, password=None):
             session.commit()
         except Exception as e:
             return f"{e}"
+
+
+def save_credentials(
+    first_name,
+    last_name,
+    other_name,
+    dob,
+    street,
+    city,
+    zip_code,
+    state,
+    id_document,
+    profile_image,
+    country,
+    phone_number_1,
+    phone_number_2,
+    user_id,
+):
+    with Session(engine) as session:
+        detail = Credentials(
+            first_name=first_name,
+            last_name=last_name,
+            other_name=other_name,
+            dob=dob,
+            street=street,
+            city=city,
+            zip_code=zip_code,
+            state=state,
+            id_document=id_document,
+            profile_image=profile_image,
+            country=country,
+            phone_number_1=phone_number_1,
+            phone_number_2=phone_number_2,
+            user_id=user_id,
+        )
+        session.add(detail)
+        session.commit()

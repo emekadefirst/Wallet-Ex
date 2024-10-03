@@ -8,3 +8,10 @@
 #     # db_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 
 # openssl rand -hex 32
+
+# // Example in JavaScript (Frontend)
+# function logout() {
+#     localStorage.removeItem("access_token");  // or sessionStorage
+#     // Redirect user to login page or home page
+#     window.location.href = "/login";
+# }

@@ -1,5 +1,8 @@
+from typing import Optional
 from pydantic import BaseModel
 from typing import Annotated, Union
+import shutil
+from fastapi import UploadFile, Form, File, UploadFile
 
 
 class Token(BaseModel):
@@ -30,7 +33,6 @@ class Login(BaseModel):
 
 
 class CredentialsSchema(BaseModel): 
-    id: int
     first_name: str 
     last_name: str 
     other_name: str  
@@ -38,8 +40,10 @@ class CredentialsSchema(BaseModel):
     city: str
     zip_code: str 
     state: str 
-    id_document: str 
-    profile_image: str 
+    id_document: Optional[UploadFile] = (File(None),)
+    profile_image: Optional[UploadFile] = (File(None),)
+    street: str
     country: str 
+    phone_number_1: str
     phone_number_2: str 
     user_id: str 
