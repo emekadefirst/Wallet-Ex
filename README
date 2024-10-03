@@ -1,4 +1,4 @@
-# This project demonstrate the use of Sumsub API 
+# This project demonstrate the use of Sumsub API
 
 #     db_url = 'expendier'
 #     # db_user = os.environ.get('postgresql_ex_user')
@@ -15,3 +15,13 @@
 #     // Redirect user to login page or home page
 #     window.location.href = "/login";
 # }
+
+
+# PROFILE_IMAGE_DIRECTORY = "./profil_image/"
+# if not os.path.exists(PROFILE_IMAGE_DIRECTORY):
+#     os.makedirs(PROFILE_IMAGE_DIRECTORY)
+
+
+# ID_DOC_DIRECTORY = "./IDs/"
+# if not os.path.exists(ID_DOC_DIRECTORY):
+#     os.makedirs(ID_DOC_DIRECTORY)
