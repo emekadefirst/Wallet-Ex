@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from .schemas import SignUp, Login
+from decorators import admin_required
 from .config import get_password_hash, create_access_token
 from .session import (
     create_user,
@@ -10,8 +11,6 @@ from .session import (
     get_current_user,
 )
 from fastapi import APIRouter, status, HTTPException
-
-
 
 
 load_dotenv()
@@ -60,6 +59,7 @@ def logout():
 
 
 @auth.get("/admin/all-users")
+@admin_required
 def admin_all_users():
     users = all_users()
     if users:
@@ -84,5 +84,3 @@ def user_profile_by_id(id : int):
     if user:
         return {"status": status.HTTP_200_OK, "data": user}
     return {"detail": "User not found", "status": status.HTTP_404_NOT_FOUND}
-
-

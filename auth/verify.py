@@ -6,6 +6,7 @@ from sqlmodel import Session
 from datetime import datetime
 from pydantic import BaseModel
 from .models import Credentials
+from decorators import verified_user
 from .session import oauth2_scheme, get_current_user
 from fastapi import Depends, HTTPException, UploadFile, File, status, APIRouter, Form
 
@@ -58,6 +59,7 @@ async def save_credentials(**kwargs):
             )
 
 
+@verified_user
 @validate.post("/verify_account")
 async def verify(
     first_name: str = Form(...),
@@ -76,15 +78,12 @@ async def verify(
     token: str = Depends(oauth2_scheme),
 ):
     try:
-        # Verify user
         current_user = await get_current_user(token)
         if not current_user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
             )
-
-        # Handle file uploads
         profile_image_path = (
             await save_file(profile_image, PROFILE_IMAGE_DIRECTORY)
             if profile_image
