@@ -4,10 +4,10 @@ from typing import Optional
 from database import engine
 from sqlmodel import Session
 from datetime import datetime
-from pydantic import BaseModel
 from .models import Credentials
 from decorators import verified_user
 from .session import oauth2_scheme, get_current_user
+from services.sumsub import create_applicant, upload_id, sign_request
 from fastapi import Depends, HTTPException, UploadFile, File, status, APIRouter, Form
 
 
