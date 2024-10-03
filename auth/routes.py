@@ -1,9 +1,10 @@
 import os
 from dotenv import load_dotenv
-from .schemas import User, Login
-from .hash import get_password_hash
+from .schemas import SignUp, Login
+from .config import get_password_hash
 from .session import create_user, user_get_user_by_id, login_user
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, HTTPException
+
 
 load_dotenv()
 auth = APIRouter()
@@ -18,7 +19,7 @@ def login(login: Login):
 
 
 @auth.post("/signup")
-def register(user: User):
+def register(user: SignUp):
     if user:
         user_id = create_user(
             email=user.email,

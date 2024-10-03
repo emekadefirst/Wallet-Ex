@@ -1,6 +1,6 @@
 from database import engine
 from .models import User
-from .hash import verify_password, get_password_hash
+from .config import verify_password, get_password_hash
 from sqlmodel import Session, select
 
 

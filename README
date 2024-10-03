@@ -1,8 +1,10 @@
-This project demonstrate the use of Sumsub API 
+# This project demonstrate the use of Sumsub API 
 
-    db_url = 'expendier'
-    # db_user = os.environ.get('postgresql_ex_user')
-    # db_password = os.environ.get('postgresql_ex_password')
-    # db_host = os.environ.get('postgresql_ex_host')
-    # db_port = os.environ.get('postgresql_ex_port')
-    # db_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+#     db_url = 'expendier'
+#     # db_user = os.environ.get('postgresql_ex_user')
+#     # db_password = os.environ.get('postgresql_ex_password')
+#     # db_host = os.environ.get('postgresql_ex_host')
+#     # db_port = os.environ.get('postgresql_ex_port')
+#     # db_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+
+# openssl rand -hex 32
