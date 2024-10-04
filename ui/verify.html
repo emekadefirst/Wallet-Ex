@@ -313,7 +313,7 @@
                     formData.append('phone_number', document.getElementById('phone_number').value);
                     formData.append('id_document', document.getElementById('id_document').files[0]);
 
-                    const response = await fetch('http://127.0.0.1:8000/validatae/verify_account', {
+                    const response = await fetch('https://socialist-hannie-emekadefirst-e06c855d.koyeb.app/verify_account', {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
