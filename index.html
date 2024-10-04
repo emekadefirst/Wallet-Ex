@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expendier interview project</title>
+    <title>Expendier Test Login</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -14,8 +14,7 @@
             --card-bg: #ffffff;
             --text-primary: #1e293b;
             --text-secondary: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
+            --error-color: #ef4444;
         }
 
         * {
@@ -26,35 +25,43 @@
         }
 
         body {
-            background: var(--background);
-            color: var(--text-primary);
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
         }
 
         .container {
             display: flex;
-            min-height: 100vh;
-        }
-
-            .verification-notice {
-            text-align: center;
-            padding: 2rem;
             background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            min-height: 600px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
         }
 
-        #verifyButton:hover {
-            background: var(--secondary-color);
+        .login-left {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
         }
 
-        .sidebar {
-            width: 280px;
-            background: var(--card-bg);
-            padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            position: fixed;
-            height: 100vh;
-            transition: all 0.3s ease;
+        .login-right {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
         }
 
         .logo {
@@ -83,173 +90,143 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-items {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 12px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .main-content {
+        .login-form {
             flex: 1;
-            margin-left: 280px;
-            padding: 2rem;
-        }
-
-        .header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .balance-card {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 2rem;
-            border-radius: 20px;
-            color: white;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 15px -3px rgb(99 102 241 / 0.3);
-        }
-
-        .balance-amount {
-            font-size: 2.5rem;
+        .form-title {
+            font-size: 2rem;
             font-weight: 700;
-            margin: 1rem 0;
-        }
-
-        .card-number {
-            font-family: monospace;
-            letter-spacing: 2px;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
             margin-bottom: 2rem;
+            color: var(--text-primary);
         }
 
-        .action-card {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            transition: transform 0.3s ease;
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
         }
 
-        .action-card:hover {
-            transform: translateY(-5px);
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .action-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--primary-color);
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            padding-left: 3rem;
+            border: 2px solid #e2e8f0;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin-bottom: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
         }
 
-        .transactions {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgb(99 102 241 / 0.1);
         }
 
-        .transaction-item {
+        .form-group i {
+            position: absolute;
+            left: 1rem;
+            top: 2.7rem;
+            color: var(--text-secondary);
+        }
+
+        .remember-forgot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
         }
 
-        .transaction-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .transaction-icon {
-            width: 40px;
-            height: 40px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-        }
-
-        .amount-positive {
-            color: var(--success);
-        }
-
-        .amount-negative {
-            color: var(--danger);
-        }
-
-        .profile-button {
-            background: var(--card-bg);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
+        .remember-me {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            cursor: pointer;
-            box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.1);
+            color: var(--text-secondary);
         }
 
-        .profile-avatar {
-            width: 32px;
-            height: 32px;
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .login-right h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .login-right p {
+            text-align: center;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .background-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            background: #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+
+        .shape-1 {
+            width: 150px;
+            height: 150px;
+            top: -75px;
+            right: -75px;
+        }
+
+        .shape-2 {
+            width: 100px;
+            height: 100px;
+            bottom: 50px;
+            left: -50px;
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                z-index: 1000;
+            .container {
+                flex-direction: column;
             }
 
-            .sidebar.active {
-                transform: translateX(0);
+            .login-right {
+                display: none;
             }
 
-            .main-content {
-                margin-left: 0;
-            }
-
-            .menu-toggle {
-                display: block;
+            .login-left {
+                padding: 2rem;
             }
         }
     </style>
@@ -257,201 +234,97 @@
 
 <body>
     <div class="container">
-        <aside class="sidebar">
+        <div class="login-left">
             <div class="logo">
                 <div class="logo-icon">
                     <i class="fas fa-cube"></i>
                 </div>
-                <div class="logo-text">Expendier Test</div>
-            </div>
-            <ul class="nav-items">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-home"></i>
-                        Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-exchange-alt"></i>
-                        Transactions
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-credit-card"></i>
-                        Cards
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        Analytics
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        Settings
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-        <main class="main-content">
-            <header class="header">
-                <h1>Hi, Guest</h1>
-                <button class="profile-button">
-                    <div class="profile-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <span>Alex Johnson</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-            </header>
-
-            <div class="balance-card">
-                <span>Total Balance</span>
-                <div class="balance-amount">₦0.00</div>
-                <div class="card-number">your card is yet to be added</div>
+                <div class="logo-text">Expendier Test </div>
             </div>
 
-            <div class="actions-grid">
-                <div class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <h3>Add Money</h3>
-                    <p>Fund your account instantly</p>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-paper-plane"></i>
-                    </div>
-                    <h3>Send Money</h3>
-                    <p>Transfer to anyone, anywhere</p>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <h3>Pay Bills</h3>
-                    <p>Quick bill payments</p>
-                </div>
-            </div>
+            <form class="login-form">
+                <h1 class="form-title">Welcome back</h1>
 
-            <div class="transactions">
-                <h2>Recent Transactions</h2>
-                <div class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div>
-                            <h4>Shopping Mall</h4>
-                            <span>Online Purchase</span>
-                        </div>
-                    </div>
-                    <div class="amount-negative">-₦15,000</div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter your email" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="remember-forgot">
+                    <label class="remember-me">
+                        <input type="checkbox">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-button">Sign In</button>
+                <div class="login-link">
+                    Don't have an account? <a href="signup.html">Sign in</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="login-right">
+            <div class="background-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
             </div>
-        </main>
+            <h2>Experience Banking of the Future</h2>
+            <p>Secure, seamless, and always at your fingertips
+            </p>
+        </div>
     </div>
 
     <script>
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', () => {
-            const menuToggle = document.createElement('button');
-            menuToggle.classList.add('menu-toggle');
-            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            menuToggle.style.position = 'fixed';
-            menuToggle.style.top = '1rem';
-            menuToggle.style.left = '1rem';
-            menuToggle.style.zIndex = '2000';
-            menuToggle.style.padding = '0.5rem';
-            menuToggle.style.background = 'var(--primary-color)';
-            menuToggle.style.border = 'none';
-            menuToggle.style.borderRadius = '8px';
-            menuToggle.style.color = 'white';
-            menuToggle.style.display = 'none';
+        document.querySelector('.login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            document.body.appendChild(menuToggle);
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
 
-            const sidebar = document.querySelector('.sidebar');
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password }),
+                    });
 
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-            });
+                    if (response.ok) {
+                        const data = await response.json();
 
-            const checkWidth = () => {
-                if (window.innerWidth <= 768) {
-                    menuToggle.style.display = 'block';
-                } else {
-                    menuToggle.style.display = 'none';
-                    sidebar.classList.remove('active');
+                        // Store relevant data in sessionStorage
+                        sessionStorage.setItem('access_token', data.access_token);
+                        sessionStorage.setItem('user_id', data.user_id.id);
+                        sessionStorage.setItem('username', data.user_id.username);
+                        sessionStorage.setItem('email', data.user_id.email);
+                        sessionStorage.setItem('is_verified', data.user_id.is_verified);
+                        sessionStorage.setItem('token_type', data.token_type);
+
+                        alert('Login successful');
+                        // Redirect to the main page
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        const errorData = await response.json();
+                        alert('Login failed: ' + (errorData.detail || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred during login');
                 }
-            };
-
-            window.addEventListener('resize', checkWidth);
-            checkWidth();
-        });
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const username = sessionStorage.getItem('username');
-        const status = sessionStorage.getItem('is_verified');
-        const mainContent = document.querySelector('.main-content');
-        const transactionsSection = document.querySelector('.transactions');
-
-        // Update the h1 element with the username
-        document.querySelector('.header h1').textContent = `Hi, ${username || 'Guest'}`;
-
-        if (status !== "true") {
-            // Update profile and balance info
-            document.querySelector('.header span').textContent = 'verify your account';
-            document.querySelector('.card-number').textContent = 'verify your account';
-            document.querySelector('.balance-amount').textContent = '****';
-
-            // Remove existing transactions section
-            if (transactionsSection) {
-                transactionsSection.remove();
-            }
-
-            // Create verification notice section
-            const verificationSection = document.createElement('div');
-            verificationSection.className = 'transactions';
-            verificationSection.style.textAlign = 'center';
-            verificationSection.style.padding = '2rem';
-
-            verificationSection.innerHTML = `
-            <h2>Account Verification Required</h2>
-            <p style="margin: 1rem 0; color: var(--text-secondary)">
-                Please verify your account to view your transaction history and unlock all features.
-            </p>
-            <button id="verifyButton" style="
-                background: var(--primary-color);
-                color: white;
-                padding: 0.75rem 1.5rem;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: 500;
-                margin-top: 1rem;
-                transition: background 0.3s ease;
-            ">
-                Verify Account
-            </button>
-        `;
-
-            mainContent.appendChild(verificationSection);
-
-            // Add click event for verify button
-            document.getElementById('verifyButton').addEventListener('click', () => {
-                window.location.href = 'verify.html';
             });
-        }
-    });
     </script>
+
+
 </body>
 
 </html>

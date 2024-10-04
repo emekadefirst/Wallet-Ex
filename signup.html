@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeoBank Sign Up</title>
+    <title>Expendier Sign Up</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -228,10 +228,10 @@
                 <div class="logo-icon">
                     <i class="fas fa-cube"></i>
                 </div>
-                <div class="logo-text">NeoBank</div>
+                <div class="logo-text">Expendier Test</div>
             </div>
-            <h2>Welcome to NeoBank</h2>
-            <p>Join us and experience the future of banking with secure and seamless financial services.</p>
+            <h2>Welcome to My test project</h2>
+            <p>Join us and experience the future of banking with secure and seamless financial services. lol</p>
         </div>
 
         <div class="signup-right">
@@ -269,7 +269,7 @@
                 <button type="submit" class="signup-button">Create Account</button>
 
                 <div class="login-link">
-                    Already have an account? <a href="login.html">Sign in</a>
+                    Already have an account? <a href="index.html">Sign in</a>
                 </div>
             </form>
         </div>
@@ -282,56 +282,75 @@
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirmPassword');
 
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             let isValid = true;
 
-            // Reset error messages
+            // Hide any existing error messages
             document.querySelectorAll('.error-message').forEach(error => {
                 error.style.display = 'none';
             });
 
-            // Username validation
+            // Validation checks
             if (username.value.length < 3) {
                 document.getElementById('username-error').textContent = 'Username must be at least 3 characters long';
                 document.getElementById('username-error').style.display = 'block';
                 isValid = false;
             }
-
-            // Email validation
             if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
                 document.getElementById('email-error').textContent = 'Please enter a valid email address';
                 document.getElementById('email-error').style.display = 'block';
                 isValid = false;
             }
-
-            // Password validation
             if (password.value.length < 6) {
                 document.getElementById('password-error').textContent = 'Password must be at least 6 characters long';
                 document.getElementById('password-error').style.display = 'block';
                 isValid = false;
             }
-
-            // Confirm password validation
             if (password.value !== confirmPassword.value) {
                 document.getElementById('confirm-password-error').textContent = 'Passwords do not match';
                 document.getElementById('confirm-password-error').style.display = 'block';
                 isValid = false;
             }
 
+            // If all validations pass, proceed with form submission
             if (isValid) {
-                // In a real application, you would send this data to your server
-                console.log('Form submitted:', {
-                    username: username.value,
-                    email: email.value,
-                    password: password.value
-                });
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/auth/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email.value,
+                            username: username.value,
+                            password: password.value
+                        })
+                    });
 
-                // Redirect to dashboard (in a real app, this would happen after successful registration)
-                window.location.href = 'dashboard.html';
+                    if (response.ok) {
+                        const data = await response.json();
+
+                        // Store relevant data in sessionStorage
+                        sessionStorage.setItem('access_token', data.access_token);
+                        sessionStorage.setItem('user_id', data.user_id.id);
+                        sessionStorage.setItem('username', data.user_id.username);
+                        sessionStorage.setItem('email', data.user_id.email);
+                        sessionStorage.setItem('is_verified', data.user_id.is_verified);
+                        sessionStorage.setItem('token_type', data.token_type);
+
+                        // Redirect to dashboard
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        console.error('Signup failed');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
         });
     </script>
+
 </body>
 
 </html>
