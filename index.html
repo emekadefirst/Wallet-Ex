@@ -311,7 +311,6 @@
                         sessionStorage.setItem('token_type', data.token_type);
 
                         alert('Login successful');
-                        // Redirect to the main page
                         window.location.href = 'dashboard.html';
                     } else {
                         const errorData = await response.json();
@@ -319,7 +318,7 @@
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('An error occurred during login');
+                    alert('User not found');
                 }
             });
     </script>

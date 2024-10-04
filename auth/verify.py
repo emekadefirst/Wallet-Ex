@@ -59,68 +59,36 @@ async def save_credentials(**kwargs):
             )
 
 
-
 @validate.post("/verify_account")
 async def verify(
-    request: Request,
-    first_name: str = Form(...),
-    last_name: str = Form(...),
-    other_name: str = Form(...),
-    dob: str = Form(...),
     city: str = Form(...),
     zip_code: str = Form(...),
     state: str = Form(...),
     street: str = Form(...),
     country: str = Form(...),
     phone_number: str = Form(...),
+    user_id: str = Form(...),
     id_document: Optional[UploadFile] = File(None),
-    profile_image: Optional[UploadFile] = File(None),
 ):
-    token = request.headers.get("Authorization")
-    if token and token.startswith("Bearer "):
-        token = token[7:]  
-    print(f"Processed token: {token}")
     try:
-        current_user = await get_current_user(token)
-        if not current_user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
-            )
-        profile_image_path = (
-            await save_file(profile_image, PROFILE_IMAGE_DIRECTORY)
-            if profile_image
-            else None
-        )
         id_document_path = (
             await save_file(id_document, ID_DOC_DIRECTORY) if id_document else None
         )
-        try:
-            dob_datetime = datetime.strptime(dob, "%Y-%m-%d")
-        except ValueError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid date format. Use YYYY-MM-DD",
-            )
+
 
         await save_credentials(
-            first_name=first_name,
-            last_name=last_name,
-            other_name=other_name,
-            dob=dob_datetime,
             street=street,
             city=city,
             zip_code=zip_code,
             state=state,
             id_document=id_document_path,
-            profile_image=profile_image_path,
             country=country,
             phone_number=phone_number,
-            user_id=current_user,
+            user_id=user_id,
         )
-        user = get_user_by_id(current_user)
+        user = get_user_by_id(user_id)
         email = user.email
-        applicant = create_applicant(current_user, email, phone_number, state)
+        applicant = create_applicant(user_id, email, phone_number, state)
         if applicant:
             upload_id(applicant, os.path.join(ID_DOC_DIRECTORY, id_document_path))
         return {
@@ -135,3 +103,14 @@ async def verify(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred: {str(e)}",
         )
+
+    # token = request.headers.get("Authorization")
+    # if token and token.startswith("Bearer "):
+    #     token = token[7:]
+    # print(f"Processed token: {token}")
+    # current_user = await get_current_user(token)
+    # if not current_user:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="Invalid authentication credentials",
+    #     )

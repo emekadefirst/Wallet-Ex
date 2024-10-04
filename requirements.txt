@@ -23,3 +23,33 @@ starlette==0.38.6
 typing_extensions==4.12.2
 urllib3==2.2.3
 uvicorn==0.31.0
+
+
+# py session.py
+# Invalid token: Not enough segments
+# Error: Invalid token: Not enough segments
+# Token has expired
+# Traceback (most recent call last):
+#   File "C:\Users\VICTOR\Desktop\expendier\auth\session.py", line 24, in get_current_user
+#     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "C:\Users\VICTOR\Desktop\Expendier\virtualenv\Lib\site-packages\jwt\api_jwt.py", line 211, in decode
+#     decoded = self.decode_complete(
+#               ^^^^^^^^^^^^^^^^^^^^^
+#   File "C:\Users\VICTOR\Desktop\Expendier\virtualenv\Lib\site-packages\jwt\api_jwt.py", line 163, in decode_complete
+#     self._validate_claims(
+#   File "C:\Users\VICTOR\Desktop\Expendier\virtualenv\Lib\site-packages\jwt\api_jwt.py", line 249, in _validate_claims
+#     self._validate_exp(payload, now, leeway)
+#   File "C:\Users\VICTOR\Desktop\Expendier\virtualenv\Lib\site-packages\jwt\api_jwt.py", line 307, in _validate_exp
+#     raise ExpiredSignatureError("Signature has expired")
+# jwt.exceptions.ExpiredSignatureError: Signature has expired
+
+# During handling of the above exception, another exception occurred:
+
+# Traceback (most recent call last):
+#   File "C:\Users\VICTOR\Desktop\expendier\auth\session.py", line 154, in <module>
+#     print(get_current_user(tok, ))
+#           ^^^^^^^^^^^^^^^^^^^^^^^
+#   File "C:\Users\VICTOR\Desktop\expendier\auth\session.py", line 32, in get_current_user
+#     raise ValueError("Token has expired")
+# ValueError: Token has expired

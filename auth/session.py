@@ -7,8 +7,8 @@ from fastapi import Depends, status, HTTPException
 from database import engine
 from .models import User, Credentials
 from .config import (
-    verify_password,
     get_password_hash,
+    verify_password,
     oauth2_scheme,
     SECRET_KEY,
     ALGORITHM,
@@ -16,18 +16,20 @@ from .config import (
 from sqlmodel import Session, select
 
 
-async def get_current_user(token: str):
+def get_current_user(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
-        print(f"Decoded user ID: {user_id}")  # Log decoded ID
+        print(f"Decoded user ID: {user_id}") 
         if not user_id:
-            raise HTTPException(status_code=401, detail="User ID missing in token")
-        return get_user_by_id(user_id)
+            raise ValueError("User ID missing in token")
+        return user_id
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has expired")
+        print("Token has expired")
+        raise ValueError("Token has expired")
     except jwt.InvalidTokenError as e:
-        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+        print(f"Invalid token: {str(e)}")
+        raise ValueError(f"Invalid token: {str(e)}")
 
 
 def create_user(email, username, password):
@@ -42,7 +44,7 @@ def create_user(email, username, password):
 def all_users():
     with Session(engine) as session:
         statement = select(User)
-        users = session.exec(statement).all()  
+        users = session.exec(statement).all()
         return users
 
 
@@ -100,37 +102,27 @@ def update_user(id, email=None, username=None, password=None):
 
 
 def save_credentials(
-    first_name,
-    last_name,
-    other_name,
-    dob,
     street,
     city,
     zip_code,
     state,
     id_document,
-    profile_image,
     country,
-    phone_number_1,
-    phone_number_2,
+    phone_number,
     user_id,
 ):
     with Session(engine) as session:
         detail = Credentials(
-            first_name=first_name,
-            last_name=last_name,
-            other_name=other_name,
-            dob=dob,
             street=street,
             city=city,
             zip_code=zip_code,
             state=state,
             id_document=id_document,
-            profile_image=profile_image,
             country=country,
-            phone_number_1=phone_number_1,
-            phone_number_2=phone_number_2,
+            phone_number=phone_number,
             user_id=user_id,
         )
         session.add(detail)
         session.commit()
+
+
