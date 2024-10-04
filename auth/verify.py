@@ -59,7 +59,7 @@ async def save_credentials(**kwargs):
             )
 
 
-@verified_user
+
 @validate.post("/verify_account")
 async def verify(
     request: Request,
@@ -77,6 +77,9 @@ async def verify(
     profile_image: Optional[UploadFile] = File(None),
 ):
     token = request.headers.get("Authorization")
+    if token and token.startswith("Bearer "):
+        token = token[7:]  
+    print(f"Processed token: {token}")
     try:
         current_user = await get_current_user(token)
         if not current_user:

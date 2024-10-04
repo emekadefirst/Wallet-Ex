@@ -1,4 +1,5 @@
 import jwt
+from jwt import InvalidTokenError, ExpiredSignatureError
 from typing import Annotated
 from sqlalchemy.orm import Session
 from jwt.exceptions import InvalidTokenError
@@ -15,23 +16,18 @@ from .config import (
 from sqlmodel import Session, select
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+async def get_current_user(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-    except InvalidTokenError:
-        raise credentials_exception
-    user = get_user_by_id(user_id)
-    if user is None:
-        raise credentials_exception
-    return user.id
+        user_id = payload.get("sub")
+        print(f"Decoded user ID: {user_id}")  # Log decoded ID
+        if not user_id:
+            raise HTTPException(status_code=401, detail="User ID missing in token")
+        return get_user_by_id(user_id)
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
 
 
 def create_user(email, username, password):
