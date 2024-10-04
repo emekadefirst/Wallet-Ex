@@ -60,23 +60,33 @@ def create_applicant(user_id, email, phone, state):
             }
 
 
+import os
+import requests
+import json
+
+
 def upload_id(applicant_id, file_path):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file at {file_path} does not exist.")
+
     url = f"{SUMSUB_TEST_BASE_URL}/resources/applicants/{applicant_id}/info/idDoc"
     headers = {
-        "Content-Type": "multipart/form-data",
+        # "Content-Type": "multipart/form-data",  # Not needed
     }
-    with open(file_path, "rb") as file:
-        files = {
-            "file": file,
-            "metadata": (
-                "",
-                '{"idDocType": "NIN", "country": "NGA"}',
-                "application/json",
-            ),
-        }
-        request = requests.Request(method="POST", url=url, headers=headers, files=files)
-        prepared_request = sign_request(request)
 
+    files = {
+        "file": open(file_path, "rb"),
+        "metadata": (
+            None,  
+            json.dumps({"idDocType": "NIN", "country": "NGA"}),  
+            "application/json",
+        ),
+    }
+
+    request = requests.Request(method="POST", url=url, headers=headers, files=files)
+    prepared_request = sign_request(request)
+
+    try:
         with requests.Session() as session:
             response = session.send(prepared_request, timeout=REQUEST_TIMEOUT)
 
@@ -93,5 +103,7 @@ def upload_id(applicant_id, file_path):
                 "body": response.json(),
                 "status": response.status_code,
             }
-
-
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"An error occurred during the request: {str(e)}")
+    finally:
+        files["file"].close()  

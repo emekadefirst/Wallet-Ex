@@ -1,11 +1,9 @@
-import uuid
-from typing import Optional
 from datetime import datetime
 from sqlmodel import SQLModel, Field
 
 
 class User(SQLModel, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: int | None = Field(primary_key=True)
     username: str | None = Field(unique=True, max_length=20)
     email: str | None = Field(unique=True, max_length=30)
     password: str

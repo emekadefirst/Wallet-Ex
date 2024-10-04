@@ -48,10 +48,10 @@ def all_users():
         return users
 
 
-from uuid import UUID
 
 
-def get_user_by_id(id: UUID):
+
+def get_user_by_id(id):
     with Session(engine) as session:
         user = session.exec(select(User).where(User.id == id)).one()
         return user
