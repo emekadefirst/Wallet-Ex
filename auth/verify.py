@@ -8,7 +8,7 @@ from .models import Credentials
 from decorators import verified_user
 from .session import oauth2_scheme, get_current_user, get_user_by_id
 from services.sumsub import create_applicant, upload_id
-from fastapi import Depends, HTTPException, UploadFile, File, status, APIRouter, Form
+from fastapi import Depends, HTTPException, UploadFile, File, status, APIRouter, Form, Request
 
 
 validate = APIRouter()
@@ -62,6 +62,7 @@ async def save_credentials(**kwargs):
 @verified_user
 @validate.post("/verify_account")
 async def verify(
+    request: Request,
     first_name: str = Form(...),
     last_name: str = Form(...),
     other_name: str = Form(...),
@@ -74,8 +75,8 @@ async def verify(
     phone_number: str = Form(...),
     id_document: Optional[UploadFile] = File(None),
     profile_image: Optional[UploadFile] = File(None),
-    token: str = Depends(oauth2_scheme),
 ):
+    token = request.headers.get("Authorization")
     try:
         current_user = await get_current_user(token)
         if not current_user:

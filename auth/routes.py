@@ -10,27 +10,42 @@ from .session import (
     save_credentials,
     get_current_user,
 )
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Request
 
 
 load_dotenv()
 auth = APIRouter()
 
-
 @auth.post("/login")
-def login(login: Login):
-    user = login_user(email=login.email, password=login.password)
-
-    if user is not None:
-        access_token = create_access_token(data={"user_id": user["id"]})
+async def login(login: Login, request: Request):
+    token = request.headers.get("Authorization")
+    if token:
+        token = token.replace("Bearer ", "")
+        current_user_id = await get_current_user(token)
         return {
-            "detail": user,
+            "detail": "Already logged in",
             "status": status.HTTP_200_OK,
-            "access_token": access_token,
+            "user_id": current_user_id,
             "token_type": "bearer",
+            "access_token": token,  
         }
 
-    return {"detail": "Invalid login details", "status": status.HTTP_401_UNAUTHORIZED}
+    user = login_user(email=login.email, password=login.password)
+    if user:
+        data = user_get_user_by_id(user["id"])
+        access_token = create_access_token(data={"user_id": str(data["id"])})
+        return {
+            "detail": "Login successful",
+            "status": status.HTTP_200_OK,
+            "access_token": access_token,
+            "user_id": user,
+            "token_type": "bearer",
+        }
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid email or password",
+    )
+
 
 
 @auth.post("/signup")
@@ -42,7 +57,7 @@ def register(user: SignUp):
             password=get_password_hash(user.password),
         )
         data = user_get_user_by_id(user_id)
-        access_token = create_access_token(data={"user_id": data["id"]})
+        access_token = create_access_token(data={"user_id": str(data["id"])})
         return {
             "status": status.HTTP_201_CREATED,
             "data": data,

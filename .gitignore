@@ -2,3 +2,48 @@
 virtualenv/
 __pycache__/
 expendier.db
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoBank 2025</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Your existing styles here */
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #818cf8;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        /* Rest of your CSS remains the same */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <!-- Sidebar content remains the same -->
+        </aside>
+        
+        <main class="main-content">
+            <header class="header">
+                <h1>Fill in Your Details</h1>
+            </header>
+        
+
+        </main>
+    </div>
+
+
+</body>
+</html>

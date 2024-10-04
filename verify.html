@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoBank 2025</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #818cf8;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+
+        input[type="text"], input[type="date"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            font-size: 1rem;
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
+        }
+
+        label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--secondary-color);
+        }
+
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-items {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            border-radius: 20px;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgb(99 102 241 / 0.3);
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .card-number {
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .transactions {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .amount-positive {
+            color: var(--success);
+        }
+
+        .amount-negative {
+            color: var(--danger);
+        }
+
+        .profile-button {
+            background: var(--card-bg);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <div class="logo-text">NeoBank</div>
+            </div>
+            <ul class="nav-items">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i>
+                        Transactions
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-credit-card"></i>
+                        Cards
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Fill in Your Details</h1>
+            </header>
+        
+            <form id="verificationForm">
+                <div class="actions-grid">
+                    <div class="action-card">
+                        <label for="first_name">First Name:</label>
+                        <input type="text" id="first_name" name="first_name" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="last_name">Last Name:</label>
+                        <input type="text" id="last_name" name="last_name" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="other_name">Other Name:</label>
+                        <input type="text" id="other_name" name="other_name">
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="dob">Date of Birth:</label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="street">Street:</label>
+                        <input type="text" id="street" name="street" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="zip_code">Zip Code:</label>
+                        <input type="text" id="zip_code" name="zip_code" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="state">State:</label>
+                        <input type="text" id="state" name="state" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="country">Country:</label>
+                        <input type="text" id="country" name="country" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="phone_number">Phone Number:</label>
+                        <input type="text" id="phone_number" name="phone_number" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="id_document">ID Document:</label>
+                        <input type="file" id="id_document" name="id_document" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+            
+                    <div class="action-card">
+                        <label for="profile_image">Profile Image:</label>
+                        <input type="file" id="profile_image" name="profile_image" accept=".jpg,.jpeg,.png" required>
+                    </div>
+                </div>
+            
+                <div class="actions-grid">
+                    <button type="submit" class="action-card">Submit</button>
+                </div>
+            </form>
+        </main>
+
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.createElement('button');
+            menuToggle.classList.add('menu-toggle');
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            menuToggle.style.position = 'fixed';
+            menuToggle.style.top = '1rem';
+            menuToggle.style.left = '1rem';
+            menuToggle.style.zIndex = '2000';
+            menuToggle.style.padding = '0.5rem';
+            menuToggle.style.background = 'var(--primary-color)';
+            menuToggle.style.border = 'none';
+            menuToggle.style.borderRadius = '8px';
+            menuToggle.style.color = 'white';
+            menuToggle.style.display = 'none';
+
+            document.body.appendChild(menuToggle);
+
+            const sidebar = document.querySelector('.sidebar');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            const checkWidth = () => {
+                if (window.innerWidth <= 768) {
+                    menuToggle.style.display = 'block';
+                } else {
+                    menuToggle.style.display = 'none';
+                    sidebar.classList.remove('active');
+                }
+            };
+
+            window.addEventListener('resize', checkWidth);
+            checkWidth();
+        });
+    </script>
+        <script>
+            document.getElementById('verificationForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const accessToken = sessionStorage.getItem('access_token');
+                const formData = new FormData();
+                formData.append('first_name', document.getElementById('first_name').value);
+                formData.append('last_name', document.getElementById('last_name').value);
+                formData.append('other_name', document.getElementById('other_name').value);
+                formData.append('dob', document.getElementById('dob').value);
+                formData.append('street', document.getElementById('street').value);
+                formData.append('city', document.getElementById('city').value);
+                formData.append('zip_code', document.getElementById('zip_code').value);
+                formData.append('state', document.getElementById('state').value);
+                formData.append('country', document.getElementById('country').value);
+                formData.append('phone_number', document.getElementById('phone_number').value);
+                formData.append('profile_image', document.getElementById('profile_image').files[0]);
+                formData.append('id_document', document.getElementById('id_document').files[0]);
+
+                
+
+                await fetch('http://127.0.0.1:8000/validatae/verify_account', {
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: formData
+                });
+            });
+        </script>
+</body>
+
+</html>
