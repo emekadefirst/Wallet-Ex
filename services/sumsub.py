@@ -95,8 +95,3 @@ def upload_id(applicant_id, file_path):
             }
 
 
-# applicant_id = create_applicant()
-# if applicant_id:
-#     file_path = "adgh .jpg"
-#     result = upload_id(applicant_id, file_path)
-#     print(result)

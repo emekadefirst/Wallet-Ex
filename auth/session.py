@@ -48,7 +48,10 @@ def all_users():
         return users
 
 
-def get_user_by_id(id):
+from uuid import UUID
+
+
+def get_user_by_id(id: UUID):
     with Session(engine) as session:
         user = session.exec(select(User).where(User.id == id)).one()
         return user
@@ -124,5 +127,3 @@ def save_credentials(
         )
         session.add(detail)
         session.commit()
-
-

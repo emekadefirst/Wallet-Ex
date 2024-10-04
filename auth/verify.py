@@ -58,6 +58,8 @@ async def save_credentials(**kwargs):
                 detail=f"Error saving credentials: {str(e)}",
             )
 
+from uuid import UUID
+
 
 @validate.post("/verify_account")
 async def verify(
@@ -70,47 +72,18 @@ async def verify(
     user_id: str = Form(...),
     id_document: Optional[UploadFile] = File(None),
 ):
-    try:
-        id_document_path = (
-            await save_file(id_document, ID_DOC_DIRECTORY) if id_document else None
-        )
+    # Convert user_id from str to UUID
+    user_id_uuid = UUID(user_id)
 
-
-        await save_credentials(
-            street=street,
-            city=city,
-            zip_code=zip_code,
-            state=state,
-            id_document=id_document_path,
-            country=country,
-            phone_number=phone_number,
-            user_id=user_id,
-        )
-        user = get_user_by_id(user_id)
-        email = user.email
-        applicant = create_applicant(user_id, email, phone_number, state)
-        if applicant:
-            upload_id(applicant, os.path.join(ID_DOC_DIRECTORY, id_document_path))
-        return {
-            "status": status.HTTP_200_OK,
-            "message": "Credentials collected successfully",
-        }
-
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error occurred: {str(e)}",
-        )
-
-    # token = request.headers.get("Authorization")
-    # if token and token.startswith("Bearer "):
-    #     token = token[7:]
-    # print(f"Processed token: {token}")
-    # current_user = await get_current_user(token)
-    # if not current_user:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="Invalid authentication credentials",
-    #     )
+    id_document_path = (
+        await save_file(id_document, ID_DOC_DIRECTORY) if id_document else None
+    )
+    user = get_user_by_id(user_id_uuid)  # Call with UUID
+    email = user.email
+    applicant = create_applicant(user_id, email, phone_number, state)
+    if applicant:
+        upload_id(user_id_uuid, id_document_path)
+    return {
+        "status": status.HTTP_200_OK,
+        "message": "Credentials collected successfully",
+    }
