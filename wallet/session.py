@@ -1,7 +1,7 @@
 from database import engine
 from typing import Optional
 from .model import Credit, Wallet, Debit
-from sqlalchemy.orm import Session, select
+from sqlmodel import Session, select
 
 
 def add_fund(user_id: int, amount: float, reference: str):
