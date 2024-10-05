@@ -1,8 +1,9 @@
 import uuid
 import string
 import random as r
+from enum import Enum
 from datetime import datetime
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field
 
 
 def wallet_tag():
@@ -26,3 +27,16 @@ class Wallet(SQLModel, table=True):
 
     def __str__(self):
         return self.tag
+
+
+class ActionOption(str, Enum):
+    TRANSFER = "Transfer"
+    ADD = "Add"
+
+class Transactions(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")  
+    amount: float = Field(default=0.00)
+    time: datetime = Field(default_factory=datetime.now)
+    action: ActionOption | None = Field(default=None, description="Type of transaction action")
+    reference: str | None = Field(max_length=12, unique=True)  

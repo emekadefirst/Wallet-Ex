@@ -39,25 +39,35 @@ def sign_request(request: requests.Request) -> requests.PreparedRequest:
 
 def create_applicant(user_id, email, phone, state):
     url = f"{SUMSUB_TEST_BASE_URL}/resources/applicants?levelName=basic-kyc-level"
-    headers = {"Content-Type": "application/json"} 
+    headers = {"Content-Type": "application/json", "Content-Encoding": "utf-8"}
     data = {
         "externalUserId": user_id,
-        "email": email,
-        "phone": phone,
-        "fixedInfo": {"country": "NGA", "placeOfBirth": state},
     }
 
-    request = requests.Request(method="POST", url=url, headers=headers, json=data)
+    request = requests.Request(
+        method="POST",
+        url=url,
+        headers=headers,
+        data=json.dumps(data),  # Use json.dumps() for the request body
+    )
     prepared_request = sign_request(request)
+
     with requests.Session() as session:
         response = session.send(prepared_request, timeout=REQUEST_TIMEOUT)
 
     if response.status_code == 201:
-        return {"response": response.json().get("id"), "message": "Applicant created successfully."}
-    return {
+        return {
             "response": response.json().get("id"),
+            "message": "Applicant created successfully.",
+        }
+    else:
+        # Print the response body for debugging
+        print("Failed to create applicant.")
+        print("Response:", response.status_code, response.text)
+        return {
+            "response": None,
             "message": "Applicant creation failed.",
-            }
+        }
 
 
 import os
@@ -66,44 +76,43 @@ import json
 
 
 def upload_id(applicant_id, file_path):
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"The file at {file_path} does not exist.")
-
     url = f"{SUMSUB_TEST_BASE_URL}/resources/applicants/{applicant_id}/info/idDoc"
-    headers = {
-        # "Content-Type": "multipart/form-data",  # Not needed
-    }
 
-    files = {
-        "file": open(file_path, "rb"),
-        "metadata": (
-            None,  
-            json.dumps({"idDocType": "NIN", "country": "NGA"}),  
-            "application/json",
-        ),
-    }
+    # Open the file to upload
+    with open(file_path, "rb") as f:
+        files = {
+            "content": f,  # The key should be 'content', not 'file'
+        }
+        metadata = '{"idDocType":"NIN", "country":"NGA"}'  # Properly format the metadata as a string
 
-    request = requests.Request(method="POST", url=url, headers=headers, files=files)
-    prepared_request = sign_request(request)
+        # Prepare the request
+        request = requests.Request(
+            method="POST",
+            url=url,
+            files=files,
+            data={
+                "metadata": metadata
+            },  # Send metadata as a form field, not in 'files'
+        )
+        prepared_request = sign_request(request)
 
-    try:
-        with requests.Session() as session:
-            response = session.send(prepared_request, timeout=REQUEST_TIMEOUT)
+        try:
+            with requests.Session() as session:
+                response = session.send(prepared_request, timeout=REQUEST_TIMEOUT)
 
-        if response.status_code == 200:
-            return {
-                "message": "ID uploaded successfully for verification.",
-                "body": response.json(),
-                "status": response.status_code,
-            }
-        else:
-            print("Failed to upload ID.")
-            return {
-                "message": "Failed to upload ID.",
-                "body": response.json(),
-                "status": response.status_code,
-            }
-    except requests.exceptions.RequestException as e:
-        raise Exception(f"An error occurred during the request: {str(e)}")
-    finally:
-        files["file"].close()  
+            if response.status_code == 200:
+                return {
+                    "message": "ID uploaded successfully for verification.",
+                    "body": response.json(),
+                    "status": response.status_code,
+                }
+            else:
+                print("Failed to upload ID.")
+                print("Response:", response.status_code, response.text)
+                return {
+                    "message": "Failed to upload ID.",
+                    "body": response.json(),
+                    "status": response.status_code,
+                }
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"An error occurred during the request: {str(e)}")

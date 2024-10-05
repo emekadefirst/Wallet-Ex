@@ -6,7 +6,7 @@ from sqlmodel import Session
 from datetime import datetime
 from .models import Credentials
 from decorators import verified_user
-from .session import oauth2_scheme, get_current_user, get_user_by_id
+from .session import oauth2_scheme, get_current_user, get_user_by_id, save_credentials
 from services.sumsub import create_applicant, upload_id
 from fastapi import Depends, HTTPException, UploadFile, File, status, APIRouter, Form, Request
 
@@ -30,7 +30,7 @@ async def save_file(file: UploadFile, directory: str) -> str:
         contents = await file.read()
         with open(file_path, "wb") as f:
             f.write(contents)
-        return file_path  # Return the full file path
+        return file_path 
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -65,19 +65,57 @@ async def verify(
     user_id: int = Form(...),
     id_document: Optional[UploadFile] = File(None),
 ):
+    # Retrieve the user by ID
+    user = get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+        )
 
-    print(user_id)
+    email = user.email
+
+    # Save ID document locally (if provided)
     id_document_path = (
         await save_file(id_document, ID_DOC_DIRECTORY) if id_document else None
     )
-    print(id_document_path)
-    user = get_user_by_id(user_id)
-    print(user.email)
-    email = user.email
-    applicant = create_applicant(user_id, email, phone_number, state)
-    if applicant:
-        upload_id(user_id, id_document_path)
-    return {
-        "status": status.HTTP_200_OK,
-        "message": "Credentials collected successfully",
-    }
+
+    try:
+        # Create the applicant using Sumsub API
+        applicant = create_applicant(user_id, email, phone_number, state)
+        if not applicant:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to create applicant.",
+            )
+
+        # Upload the ID document to Sumsub (if provided)
+        if id_document_path:
+            upload_response = upload_id(applicant, id_document_path)
+            if upload_response["status"] != 200:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="ID upload failed."
+                )
+
+        # Save the user's credentials in the database
+        save_credentials(
+            city=city,
+            state=state,
+            street=street,
+            country=country,
+            phone_number=phone_number,
+            user_id=user_id,
+            zip_code=zip_code,
+            id_document=id_document_path,
+        )
+
+        return {
+            "status": status.HTTP_200_OK,
+            "message": "Credentials collected and verified successfully",
+            "applicant_id": applicant,  # Return the applicant ID
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred during verification: {str(e)}",
+        )
