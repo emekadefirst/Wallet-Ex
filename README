@@ -1,27 +1,60 @@
-# This project demonstrate the use of Sumsub API
+# Sumsub API Integration Project
 
-#     db_url = 'expendier'
-#     # db_user = os.environ.get('postgresql_ex_user')
-#     # db_password = os.environ.get('postgresql_ex_password')
-#     # db_host = os.environ.get('postgresql_ex_host')
-#     # db_port = os.environ.get('postgresql_ex_port')
-#     # db_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+## Overview
 
-# openssl rand -hex 32
+This project demonstrates the use of the **Sumsub API** to verify user identity documents and store user credentials. It provides an API for user verification that allows uploading ID documents, saving user credentials, and managing their verification process. The project also supports adding and updating fund statuses for users, providing a seamless integration with the Sumsub verification flow.
 
-# // Example in JavaScript (Frontend)
-# function logout() {
-#     localStorage.removeItem("access_token");  // or sessionStorage
-#     // Redirect user to login page or home page
-#     window.location.href = "/login";
-# }
+## Features
+
+- **User Verification**: Verifies users by creating Sumsub applicants and uploading ID documents.
+- **Fund Management**: Adds funds to user accounts and updates fund statuses.
+- **File Handling**: Allows uploading of ID documents and securely saving them on the server.
+- **Credentials Storage**: Stores user credentials in a database with SQLModel for persistence.
+- **FastAPI-based API**: Implements endpoints for verification and fund management.
+
+## Tech Stack
+
+- **FastAPI**: A modern, fast (high-performance) web framework for building APIs.
+- **SQLModel**: ORM for interacting with the database.
+- **Sumsub API**: For handling user identity verification.
+- **Uvicorn**: ASGI server for serving the application.
+- **SQLAlchemy**: Database management.
+
+## Prerequisites
+
+Before running this project, ensure you have the following installed:
+
+- **Python 3.8+**
+- **FastAPI**
+- **SQLModel**
+- **Uvicorn**
+- **Sumsub API Credentials**: You will need your Sumsub `SECRET_KEY` and `APP_TOKEN`.
+
+## Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/sumsub-api-integration.git
+   cd sumsub-api-integration
+
+pip install -r requirements.txt
+
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+.
+├── app
+│   ├── models.py           # SQLModel models for Fund, Credentials, etc.
+│   ├── services            # Service layer for Sumsub API
+│   ├── api.py              # FastAPI endpoints
+│   └── main.py             # FastAPI entry point
+├── database.py              # Database connection setup
+├── README.md                # Project documentation
+├── requirements.txt         # List of dependencies
+└── IDs                      # Directory where uploaded ID documents are stored
 
 
-# PROFILE_IMAGE_DIRECTORY = "./profil_image/"
-# if not os.path.exists(PROFILE_IMAGE_DIRECTORY):
-#     os.makedirs(PROFILE_IMAGE_DIRECTORY)
+
+This code can be directly copied and pasted into your `README.md` file for GitHub. It will render properly with syntax highlighting, sections, and formatting.
 
 
-# ID_DOC_DIRECTORY = "./IDs/"
-# if not os.path.exists(ID_DOC_DIRECTORY):
-#     os.makedirs(ID_DOC_DIRECTORY)
+# API url: https://socialist-hannie-emekadefirst-e06c855d.koyeb.app/docs

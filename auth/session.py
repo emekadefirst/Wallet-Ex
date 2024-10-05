@@ -1,7 +1,7 @@
 import jwt
 from jwt import InvalidTokenError, ExpiredSignatureError
 from typing import Annotated
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, select
 from jwt.exceptions import InvalidTokenError
 from fastapi import Depends, status, HTTPException
 from database import engine
@@ -13,7 +13,7 @@ from .config import (
     SECRET_KEY,
     ALGORITHM,
 )
-from sqlmodel import Session, select
+
 
 
 def get_current_user(token: str):
@@ -124,5 +124,3 @@ def save_credentials(
         )
         session.add(detail)
         session.commit()
-
-

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from auth.routes import auth
+from wallet.route import wallet
 from auth.verify import validate
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,6 +13,7 @@ app = FastAPI(
 
 app.include_router(auth, prefix="/auth")
 app.include_router(validate, prefix="/validatae")
+app.include_router(wallet, prefix="/wallet")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
