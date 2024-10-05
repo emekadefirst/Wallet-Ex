@@ -20,3 +20,14 @@ def update_status(status: Optional[str] = None, reference: Optional[str] = None)
             detail.status = status
         session.add(detail)  
         session.commit()
+
+
+def update_balance(amount: Optional[int] = None, tag: Optional[str] = None):
+    with Session(engine) as session:
+        detail = session.exec(select(Wallet).where(Wallet.tag == tag)).one()
+        if not detail:
+            raise ValueError("Invalide wallet tag")
+        if amount:
+            detail.balance = amount
+        session.add(detail)
+        session.commit()
