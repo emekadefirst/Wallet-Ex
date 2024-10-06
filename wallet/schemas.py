@@ -4,7 +4,6 @@ class Fund(BaseModel):
     email: str
     amount: float
     user_id: int
-    action: str
 
 
 class AppSend(BaseModel):

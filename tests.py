@@ -133,3 +133,4 @@ if applicant and applicant.get("response"):
     print(upload)
 else:
     print("Failed to create applicant. Skipping ID upload.")
+

@@ -37,6 +37,9 @@ class Credit(SQLModel, table=True):
     time: datetime = Field(default_factory=datetime.now)
 
 
+    def __str__(self):
+        return self.reference
+
 class Debit(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: int = Field(foreign_key="user.id")

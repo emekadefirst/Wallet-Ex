@@ -22,30 +22,29 @@ async def login(login: Login, request: Request):
     if token:
         token = token.replace("Bearer ", "")
         current_user_id = await get_current_user(token)
-        return {
-            "detail": "Already logged in",
-            "status": status.HTTP_200_OK,
-            "user_id": current_user_id,
-            "token_type": "bearer",
-            "access_token": token,  
-        }
-
-    user = login_user(email=login.email, password=login.password)
-    if user:
-        data = user_get_user_by_id(user["id"])
-        access_token = create_access_token(data={"user_id": str(data["id"])})
-        return {
-            "detail": "Login successful",
-            "status": status.HTTP_200_OK,
-            "access_token": access_token,
-            "user_id": user,
-            "token_type": "bearer",
-        }
+        user = login_user(email=login.email, password=login.password)
+        if user:
+            data = user_get_user_by_id(user["id"])
+            return {
+                "detail": "Login successful",
+                "status": status.HTTP_200_OK,
+                "user_id": current_user_id,
+                "token_type": "bearer",
+                "access_token": token,
+            }
+        return {"message": "invalid credentials", "status": status.HTTP_400_BAD_REQUEST}
+    access_token = create_access_token(data={"user_id": str(data["id"])})  
+    return {
+        
+        "status": status.HTTP_200_OK,
+        "access_token": access_token,
+        "user_id": user,
+        "token_type": "bearer",
+    }
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid email or password",
     )
-
 
 
 @auth.post("/signup")

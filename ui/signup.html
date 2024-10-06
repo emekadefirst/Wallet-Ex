@@ -274,45 +274,7 @@
             </form>
         </div>
     </div>
-
-    <script>
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            try {
-                const response = await fetch('https://socialist-hannie-emekadefirst-e06c855d.koyeb.app/auth/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, email, password }),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    sessionStorage.setItem('access_token', data.access_token);
-                    sessionStorage.setItem('user_id', data.user_id.id);
-                    sessionStorage.setItem('username', data.user_id.username);
-                    sessionStorage.setItem('email', data.user_id.email);
-                    sessionStorage.setItem('is_verified', data.user_id.is_verified);
-                    sessionStorage.setItem('token_type', data.token_type);
-
-                    alert('Signup successful');
-                    window.location.href = 'index.html';
-                } else {
-                    const errorData = await response.json();
-                    alert('Signup failed failed: ' + (errorData.detail || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Login successful');
-            }
-        });
-    </script>
+<script src="assets/js/signup.js"></script>
 </body>
 
 </html>
