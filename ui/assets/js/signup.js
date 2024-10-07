@@ -81,11 +81,6 @@ if (signupForm) {
         // Store user data according to the actual response format
         const sessionData = {
           access_token: data.access_token,
-          user_id: data.data.id,
-          username: data.data.username,
-          email: data.data.email,
-          is_verified: data.data.is_verified,
-          token_type: data.token_type,
         };
 
         Object.entries(sessionData).forEach(([key, value]) => {

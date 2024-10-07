@@ -7,7 +7,6 @@ from .session import (
     user_get_user_by_id,
     login_user,
     all_users,
-    save_credentials,
     get_current_user,
 )
 from fastapi import APIRouter, status, HTTPException, Request
@@ -18,52 +17,48 @@ auth = APIRouter()
 
 @auth.post("/login")
 async def login(login: Login, request: Request):
-    token = request.headers.get("Authorization")
+    token = request.headers.get("access_token")
     if token:
-        token = token.replace("Bearer ", "")
         current_user_id = await get_current_user(token)
         user = login_user(email=login.email, password=login.password)
         if user:
-            data = user_get_user_by_id(user["id"])
+            data = user_get_user_by_id(user.id)
             return {
                 "detail": "Login successful",
                 "status": status.HTTP_200_OK,
-                "user_id": current_user_id,
                 "token_type": "bearer",
                 "access_token": token,
+                "data": data
             }
         return {"message": "invalid credentials", "status": status.HTTP_400_BAD_REQUEST}
-    access_token = create_access_token(data={"user_id": str(data["id"])})  
-    return {
-        
-        "status": status.HTTP_200_OK,
-        "access_token": access_token,
-        "user_id": user,
-        "token_type": "bearer",
-    }
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid email or password",
-    )
-
+    return {"message": "Unauthorized", "status": status.HTTP_401_UNAUTHORIZED}
+    # access_token = create_access_token(user["id"])
+    # return {
+    #     "status": status.HTTP_200_OK,
+    #     "access_token": access_token,
+    #     "user_id": user,
+    #     "token_type": "bearer",
+    # }
 
 @auth.post("/signup")
 def register(user: SignUp):
-    if user:
-        user_id = create_user(
-            email=user.email,
-            username=user.username,
-            password=get_password_hash(user.password),
-        )
-        data = user_get_user_by_id(user_id)
-        access_token = create_access_token(data={"user_id": str(data["id"])})
+    data = create_user(
+        email=user.email,
+        username=user.username,
+        password=get_password_hash(user.password),
+    )
+    print(data)
+    if data:
+        detail = user_get_user_by_id(data)
+        user_data = {"id": data}
+        print(user_data)
+        access_token = create_access_token(user_data)
         return {
             "status": status.HTTP_201_CREATED,
-            "data": data,
+            "data": detail,
             "access_token": access_token,
             "token_type": "bearer",
         }
-
     return status.HTTP_400_BAD_REQUEST
 
 
