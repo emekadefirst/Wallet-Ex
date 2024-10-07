@@ -3,6 +3,11 @@ from auth.routes import auth
 from wallet.route import wallet
 from auth.verify import validate
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from fastapi.responses import FileResponse
+
+class Edit(BaseModel):
+    message: str 
 
 app = FastAPI(
     title="Expendier Wallet API",
@@ -25,3 +30,5 @@ app.add_middleware(
 @app.get("/")
 def home():
     return {"message": "Welcome to the Expendier Wallet API"}
+
+

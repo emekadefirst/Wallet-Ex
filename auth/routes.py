@@ -93,3 +93,8 @@ def user_profile_by_id(id : int):
     if user:
         return {"status": status.HTTP_200_OK, "data": user}
     return {"detail": "User not found", "status": status.HTTP_404_NOT_FOUND}
+
+
+@auth.put("/reset-password")
+def reset():
+    pass
