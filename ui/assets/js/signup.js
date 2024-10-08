@@ -67,7 +67,7 @@ if (signupForm) {
       submitButton.disabled = true;
       submitButton.textContent = "Creating Account...";
 
-      const response = await fetch(`${liveUrl}/auth/signup`, {
+      const response = await fetch(`${testUrl}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

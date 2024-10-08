@@ -180,7 +180,7 @@
 
             if (response.ok) {
                 const data = await response.json();
-                window.location.href = data.url; 
+                window.location.href = data.payment_url; 
             } else {
                 console.error('Error funding wallet:', response.status);
             }

@@ -7,29 +7,34 @@ from pypstk.payment import Payment
 from pypstk.status import Verify
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=".env")
 wallet = APIRouter()
-secret_key = os.environ.get('PAYSTACK_KEY')
+# secret_key = os.getenv("PAYSTACK_KEY")
+
+# # To see all environment variables
 
 
 @wallet.post("/deposit")
 async def add_fund(pay: Fund, background_tasks: BackgroundTasks):
     try:
-        new_payment = Payment(email=pay.email, amount=pay.amount, secret_key=secret_key)
-        print(secret_key)
+        new_payment = Payment(
+            email=pay.email,
+            amount=pay.amount *100,
+            secret_key="sk_test_fa4df6c4891b60bef465055f6d2b1935be22639d",
+        )
         transaction_data = new_payment.initialize_transaction()
 
         if transaction_data:
-            reference = transaction_data["reference"]
-            add_fund(user_id=pay.user_id, amount=pay.amount, reference=reference)
+            reference = transaction_data["references"]
+            # add_fund(user_id=pay.user_id, amount=pay.amount, reference=reference)
+
+            return {"payment_url": transaction_data["url"]}
             background_tasks.add_task(
                 verify_payment,
                 reference=reference,
                 user_id=pay.user_id,
                 amount=pay.amount,
             )
-            return {"payment_url": transaction_data["url"], "reference": reference}
-
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Failed to initialize transaction",
@@ -47,7 +52,10 @@ async def verify_payment(reference: str, user_id: int, amount: float):
         count = 0
 
         while count < trial_limit:
-            verify = Verify(reference=reference, secret_key=secret_key)
+            verify = Verify(
+                reference=reference,
+                secret_key="sk_test_fa4df6c4891b60bef465055f6d2b1935be22639d",
+            )
             response = verify.status()
 
             if response == "success":
@@ -80,6 +88,6 @@ async def debit(send: AppSend):
     pass
 
 
-@wallet.post("/bank/debit")
-async def debit(send: BankSend):
-    pass
+# @wallet.post("/bank/debit")
+# async def debit(send: BankSend):
+#     pass
