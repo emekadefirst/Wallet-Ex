@@ -11,13 +11,16 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     successMessage.style.display = "none";
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/auth/admin-login", {
+        const response = await fetch(
+          "https://socialist-hannie-emekadefirst-e06c855d.koyeb.app/auth/admin-login",
+          {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ username, password }),
-        });
+          }
+        );
 
         if (response.ok) {
             const data = await response.json();

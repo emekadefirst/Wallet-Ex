@@ -12,7 +12,7 @@ document.querySelector(".login-form").addEventListener("submit", async (e) => {
     const baseUrl =
       window.location.hostname === "127.0.0.1" ? testUrl : liveUrl;
 
-    const response = await fetch(`${testUrl}/auth/login`, {
+    const response = await fetch(`${liveUrl}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
