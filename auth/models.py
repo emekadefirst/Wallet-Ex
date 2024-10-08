@@ -38,7 +38,7 @@ class Admin(SQLModel, table=True):
     username: str | None = Field(unique=True, max_length=20)
     email: str | None = Field(unique=True, max_length=55)
     password: str
-    created_at: datetime = Field(default_factory=datetime.date)
+    created_at: datetime = Field(default_factory=datetime.now)
     is_staff: bool = Field(default=True)
 
     def __str__(self):

@@ -160,34 +160,34 @@
                 fundingModal.style.display = 'none'; // Hide modal
             }
         });
-    document.querySelector("#fundingForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
+        document.querySelector("#fundingForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-        const amount = document.getElementById("amount").value;
-        const email = sessionStorage.getItem("email");
-        const token = sessionStorage.getItem("token");
-        const user_id = sessionStorage.getItem("user_id");
+            const amount = document.getElementById("amount").value;
+            const email = sessionStorage.getItem("email");
+            const token = sessionStorage.getItem("token");
+            const user_id = sessionStorage.getItem("user_id");
 
-        try {
-            const response = await fetch(`http://127.0.0.1:8000/wallet/deposit`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "access_token": token, 
-                },
-                body: JSON.stringify({ email, amount, user_id }),
-            });
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/wallet/deposit`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "access_token": token,
+                    },
+                    body: JSON.stringify({ email, amount, user_id }),
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                window.location.href = data.url; 
-            } else {
-                console.error('Error funding wallet:', response.status);
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = data.url;
+                } else {
+                    console.error('Error funding wallet:', response.status);
+                }
+            } catch (error) {
+                console.error('Request failed', error);
             }
-        } catch (error) {
-            console.error('Request failed', error);
-        }
-    });
+        });
 
 
     </script>

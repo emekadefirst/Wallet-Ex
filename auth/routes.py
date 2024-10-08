@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from .schemas import SignUp, Login
+from .schemas import SignUp, Login, AdminSignUp, AdminLogin
 from decorators import admin_required
 from .config import get_password_hash, create_access_token
 from .session import (
@@ -8,6 +8,9 @@ from .session import (
     login_user,
     all_users,
     get_current_user,
+    create_admin,
+    get_admin_by_id,
+    login_admin,
 )
 from fastapi import APIRouter, status, HTTPException, Request
 
@@ -32,13 +35,7 @@ async def login(login: Login, request: Request):
             }
         return {"message": "invalid credentials", "status": status.HTTP_400_BAD_REQUEST}
     return {"message": "Unauthorized", "status": status.HTTP_401_UNAUTHORIZED}
-    # access_token = create_access_token(user["id"])
-    # return {
-    #     "status": status.HTTP_200_OK,
-    #     "access_token": access_token,
-    #     "user_id": user,
-    #     "token_type": "bearer",
-    # }
+
 
 @auth.post("/signup")
 def register(user: SignUp):
@@ -47,7 +44,6 @@ def register(user: SignUp):
         username=user.username,
         password=get_password_hash(user.password),
     )
-    print(data)
     if data:
         detail = user_get_user_by_id(data)
         user_data = {"id": data}
@@ -98,3 +94,26 @@ def user_profile_by_id(id : int):
 @auth.put("/reset-password")
 def reset():
     pass
+
+@auth.post("/admin-signup")
+def admin_signup(signup : AdminSignUp):
+    admin_session = create_admin(
+        username=signup.username,
+        email=signup.email,
+        password=get_password_hash(signup.password),
+    )
+    if admin_session:
+        data = get_admin_by_id(admin_session)
+        return {
+            "status": status.HTTP_201_CREATED,
+            "data": data
+        }
+    return {"status": status.HTTP_400_BAD_REQUEST, "detail": "Error during signup"}
+
+@auth.post("/admin-login")
+def admin_login(login: AdminLogin):
+    user = login_admin(username=login.username, password=login.password)
+    if user:
+        return {"status": status.HTTP_200_OK, "data": user}
+    return {"status": status.HTTP_400_BAD_REQUEST, "detail": "Wrong credentails provided"}
+

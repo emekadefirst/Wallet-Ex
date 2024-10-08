@@ -48,30 +48,30 @@ def check_admin_status(user_id: int) -> bool:
         return bool(admin and admin.is_staff)
 
 
-def admin_required(func):
-    @wraps(func)
-    async def wrapper(*args, token: str = Depends(get_current_user), **kwargs):
-        try:
-            current_user = await get_current_user(token)
-            if not current_user:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid authentication credentials",
-                )
-            is_admin = check_admin_status(current_user)
-            if not is_admin:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Admin privileges required",
-                )
-            return await func(*args, **kwargs)
+# def admin_required(func):
+#     @wraps(func)
+#     async def wrapper(*args, token: str = Depends(get_current_user), **kwargs):
+#         try:
+#             current_user = await get_current_user(token)
+#             if not current_user:
+#                 raise HTTPException(
+#                     status_code=status.HTTP_401_UNAUTHORIZED,
+#                     detail="Invalid authentication credentials",
+#                 )
+#             is_admin = check_admin_status(current_user)
+#             if not is_admin:
+#                 raise HTTPException(
+#                     status_code=status.HTTP_403_FORBIDDEN,
+#                     detail="Admin privileges required",
+#                 )
+#             return await func(*args, **kwargs)
 
-        except HTTPException as he:
-            raise he
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"An error occurred: {str(e)}",
-            )
-    return wrapper
+#         except HTTPException as he:
+#             raise he
+#         except Exception as e:
+#             raise HTTPException(
+#                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#                 detail=f"An error occurred: {str(e)}",
+#             )
+#     return wrapper
 

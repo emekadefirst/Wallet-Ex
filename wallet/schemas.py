@@ -8,7 +8,6 @@ class Fund(BaseModel):
 
 class AppSend(BaseModel):
     amount: float
-    user_id: int
     recipient_email: str
 
 

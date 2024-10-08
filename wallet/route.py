@@ -11,10 +11,12 @@ load_dotenv()
 wallet = APIRouter()
 secret_key = os.environ.get('PAYSTACK_KEY')
 
+
 @wallet.post("/deposit")
 async def add_fund(pay: Fund, background_tasks: BackgroundTasks):
     try:
         new_payment = Payment(email=pay.email, amount=pay.amount, secret_key=secret_key)
+        print(secret_key)
         transaction_data = new_payment.initialize_transaction()
 
         if transaction_data:

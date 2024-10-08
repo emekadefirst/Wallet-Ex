@@ -5,7 +5,7 @@ from jwt.exceptions import InvalidTokenError
 from fastapi import Depends, status, HTTPException
 from database import engine
 from .schemas import TokenData
-from .models import User, Credentials
+from .models import User, Credentials, Admin
 from .config import (
     get_password_hash,
     verify_password,
@@ -125,3 +125,37 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     if user is None:
         raise credentials_exception
     return user
+
+
+def create_admin(email, username, password):
+    with Session(engine) as session:
+        model = Admin(email=email, username=username, password=password)
+        session.add(model)
+        session.commit()
+        user_id = model.id
+        return user_id
+
+
+def get_admin_by_id(id):
+    with Session(engine) as session:
+        user = session.exec(select(Admin).where(Admin.id == id)).one()
+        data = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }
+        return data
+
+
+def login_admin(username, password):
+    with Session(engine) as session:
+        user = session.exec(select(Admin).where(Admin.username == username)).first()
+        if user and verify_password(password, user.password):
+            return {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "is_staff": user.is_staff
+            }
+        else:
+            raise Exception("Invalid credentials")

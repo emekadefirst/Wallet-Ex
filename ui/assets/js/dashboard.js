@@ -79,8 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     mainContent.appendChild(verificationSection);
-
-    // Add click event for verify button
     document.getElementById("verifyButton").addEventListener("click", () => {
         window.location.href = "verify.html";
     });
